@@ -6,6 +6,7 @@ Created on Mon Aug 20 21:33:07 2018
 @author: brandinho
 """
 
+from pathlib import Path
 import random
 import numpy as np
 import tensorflow as tf
@@ -90,12 +91,24 @@ for j in range(len(sampleHands)):
 #test_csv = pd.concat([test_csv1, test_csv2])
 #probabilityInputList = test_csv.values[:,:-2]; probabilityList = test_csv.values[:,-2:]
 
-
+tf.reset_default_graph()
 sess = tf.Session()
-use_existing_model = False
-graph = None
-probabilityFunction = probabilityApproximator(sess, probabilityInputList.shape[1], 0.0005, use_existing_model, graph)
-sess.run(tf.global_variables_initializer())
+use_existing_model = True
+
+if use_existing_model:
+    my_probability_file = Path("Probability Model/checkpoint")
+    if my_probability_file.is_file() == True:
+        probability_saver = tf.train.import_meta_graph("Probability Model/ProbabilityApproximator.meta")
+        probability_saver.restore(sess, tf.train.latest_checkpoint("Probability Model"))
+        
+        graph = tf.get_default_graph()
+        probabilityFunction = probabilityApproximator(sess, probabilityInputList.shape[1], 0.0005, use_existing_model, graph)
+    else:
+        raise ValueError("You do not have an existing model, please change this variable to 'False'")
+else:
+    graph = None
+    probabilityFunction = probabilityApproximator(sess, probabilityInputList.shape[1], 0.0005, use_existing_model, graph)
+    sess.run(tf.global_variables_initializer())
 
 
 n_training_set = 900
@@ -106,4 +119,9 @@ train_Y, test_Y = probabilityList[:n_training_set,], probabilityList[n_training_
 training_error_array, testing_error_array = probabilityFunction.trainModel(train_X, train_Y, 10000, 25, test_X, test_Y)
 
 # Perform Inference
-sess.run(probabilityFunction.approximate_probability, {probabilityFunction.inputs: train_X[0,].reshape(1, -1)})
+sample_size = 100
+test_predictions = sess.run(probabilityFunction.approximate_probability, {probabilityFunction.inputs: test_X[:sample_size,]})
+test_labels = test_Y[:sample_size,]
+test_MAE = np.mean(abs(test_predictions - test_labels), axis = 0)
+
+print("\nMAE for the sample \nP(Win): {:.2f}% \nP(Tie): {:.2f}%".format(test_MAE[0]*100, test_MAE[1]*100))
