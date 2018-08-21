@@ -44,9 +44,9 @@ probabilityInputList = np.zeros((len(sampleHands), len(mock_array)))
 probabilityList = np.zeros((len(sampleHands),2))
 for j in range(len(sampleHands)):
     
-    if j % 1000 == 0:
+    if j % 100 == 0:
         print('You are at iteration {}'.format(j))
-    
+
     evaluationDeck.shuffleDeck(); evaluationDeck.table = sampleTableCards[j]
     sampleCurrentHand, sampleTempBestCards = evaluationDeck.evaluateHand(sampleHands[j])
     sampleCurrentRanking = simulationDeck.handRanking(sampleCurrentHand)
@@ -72,7 +72,7 @@ for j in range(len(sampleHands)):
         
     probabilityInputList[j,] = np.concatenate((probArray, statusArray, tableStatusArray, tableStatus))
     temp_prob_array = simulateProbability(sampleHands[j], sampleTableCards[j], simulationDeck, 1000)
-        
+
     probabilityList[j,] = temp_prob_array[-1,]
     
     
@@ -98,8 +98,12 @@ probabilityFunction = probabilityApproximator(sess, probabilityInputList.shape[1
 sess.run(tf.global_variables_initializer())
 
 
-n_training_set = 225000
+n_training_set = 900
 train_X, test_X = probabilityInputList[:n_training_set,], probabilityInputList[n_training_set:,]
 train_Y, test_Y = probabilityList[:n_training_set,], probabilityList[n_training_set:,]
 
-training_error_array, testing_error_array = probabilityFunction.trainModel(train_X, train_Y, 10000, 250, test_X, test_Y)
+# Perform Training
+training_error_array, testing_error_array = probabilityFunction.trainModel(train_X, train_Y, 10000, 25, test_X, test_Y)
+
+# Perform Inference
+sess.run(probabilityFunction.approximate_probability, {probabilityFunction.inputs: train_X[0,].reshape(1, -1)})
