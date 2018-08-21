@@ -75,15 +75,7 @@ for j in range(len(sampleHands)):
     temp_prob_array = simulateProbability(sampleHands[j], sampleTableCards[j], simulationDeck, 1000)
 
     probabilityList[j,] = temp_prob_array[-1,]
-    
-    
-# =============================================================================
-#import pandas as pd
-#simulated_name_array = mock_array + ['SimulatedProbabilityWinning', 'SimulatedProbabilityTie']
-#probability_dataframe = pd.DataFrame(np.hstack((probabilityInputList, probabilityList.reshape(-1, 2))), columns = simulated_name_array)
-#probability_dataframe.columns = pd.Index(simulated_name_array)
-#probability_dataframe.to_csv("ProbabilityTrainingData_Set2.csv", header = True)
-# =============================================================================
+
     
 #import pandas as pd
 #test_csv1 = pd.read_csv("ProbabilityTrainingData_Set1.csv", index_col = 0)
@@ -109,7 +101,6 @@ else:
     graph = None
     probabilityFunction = probabilityApproximator(sess, probabilityInputList.shape[1], 0.0005, use_existing_model, graph)
     sess.run(tf.global_variables_initializer())
-
 
 n_training_set = 900
 train_X, test_X = probabilityInputList[:n_training_set,], probabilityInputList[n_training_set:,]
