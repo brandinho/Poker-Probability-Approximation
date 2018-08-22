@@ -1,6 +1,6 @@
 # Poker Probability Approximation with Deep Learning
 
-This project uses of a neural network to quickly compute the probability of a hand ending in a win or tie. While lookup tables can be used, they are memory-intensive and cannot be stored in memory-constrained environments such as mobile applications. Storing the weights in either numpy or tensorflow drastically reduces the memory required. The learned model can be used in any better round of Texas Hold'Em Poker.
+This project uses of a neural network to quickly compute the probability of a hand ending in a win or tie. While lookup tables can be used, they are memory-intensive and cannot be stored in memory-constrained environments such as mobile applications. Storing the weights in either numpy or tensorflow drastically reduces the memory required. The learned model can be used in any bettin round of Texas Hold'Em Poker.
 
 ## Getting Started
 
