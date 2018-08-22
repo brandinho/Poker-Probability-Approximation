@@ -28,6 +28,6 @@ graph = tf.get_default_graph()
 probabilityFunction = probabilityApproximator(sess, probabilityInputList.shape[1], 0.0005, use_existing_model, graph)
 ```
 
-A popular heuristic implementation is to use the probabilities obtained from the neural network with the Kelly Criterion (with some noise to reduce predictability). Conversely, with a machine learning agent, we can use a function approximation for the policy and feed these probabilities as one of the inputs.
+A popular heuristic implementation is to use the probabilities obtained from the neural network with the Kelly Criterion (with some noise to reduce predictability). Conversely, with a machine learning agent, we can use a function approximation for the policy and feed these probabilities as some of the inputs.
 
 
