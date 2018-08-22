@@ -9,8 +9,14 @@ Created on Mon Aug 20 21:22:51 2018
 import math
 import numpy as np
 
+
+### Combinations Calculator ###
+
 def nCr(n, r):
     return (math.factorial(n) / (math.factorial(r) * math.factorial(n - r)))
+
+
+### Extract unique elements from a list ###
 
 def uniq(lst):
     last = object()
@@ -20,14 +26,20 @@ def uniq(lst):
         yield item
         last = item
 
+
+### Sort and remove duplicates ###
+
 def sort_and_deduplicate(l):
     return list(uniq(sorted(l, reverse=True)))
+
+
+### Count the number of outs for a straight ###
 
 def countOuts(numbers):
     if 14 in numbers:
         numbers = [1] + numbers
     
-    possibilityList= []
+    possibilityList = []
     for i in range(len(numbers)):
         possibilityList.append(np.arange(max(numbers[i] - 4, 1), min(numbers[i] + 4, 14) + 1))
     
@@ -65,6 +77,8 @@ def countOuts(numbers):
 
 def calcProbs(hand, rankType, cardsOnTable, handStatus):
     
+    ### We extract variables from the status dictionary to be used in our conditional statements ###
+    
     FullHouse = handStatus["FullHouse"]
     Triple = handStatus["Triple"]
     TwoPair = handStatus["TwoPair"]
@@ -76,15 +90,16 @@ def calcProbs(hand, rankType, cardsOnTable, handStatus):
     
     numSuited = handStatus["NumSuited"]
     
-    #I have to calculate the ones below in the hand status function
     straightGap = handStatus["straightGap"]
     straightLowerBound = handStatus["straightLowerBound"]
     straightUpperBound = handStatus["straightUpperBound"]
+        
+    ### We calculate the probabilities using combinatorics ###
     
     if cardsOnTable == "PreFlop":
         totalCombinations = nCr(50, 5)
         if rankType == "Pair":
-            #We don't have to worry about if we have a pair in our hand because if we did then we wouldn't be calculating this
+            # We don't have to worry about if we have a pair in our hand because if we had a pair then we wouldn't be calculating this
             probMatchingHand = 6 * nCr(11, 4) * 4**4
             probMatchingTable = 11 * nCr(4, 2) * nCr(10, 3) * 4**3
             marginalProbability1 = probMatchingHand / totalCombinations
@@ -107,7 +122,7 @@ def calcProbs(hand, rankType, cardsOnTable, handStatus):
                 probability = marginalProbability1 + (1 - marginalProbability1) * (probMatchingTable / totalCombinations)
             elif Pair == True:
                 probability = (2 * nCr(12, 4) * 4**4) / totalCombinations
-        elif rankType == "Straight": #I purposely left out the probability of flopping a straight that has nothing to do with your hand
+        elif rankType == "Straight": # I purposely left out the probability of flopping a straight that has nothing to do with your hand
             if straightGap == 0:
                 if straightLowerBound > 3 or straightUpperBound < 12:
                     firstMultiplier = 4
@@ -191,7 +206,7 @@ def calcProbs(hand, rankType, cardsOnTable, handStatus):
                 firstMultiplier = multipliers[0]
                 secondMultiplier = multipliers[1]
                 probability = ((firstMultiplier + secondMultiplier) * 4 * 4**4 * 7 * 4) / totalCombinations
-            elif straightGap == -1: #This means that they have a pocket pair
+            elif straightGap == -1: # This means that they have a pocket pair
                 if straightLowerBound > 4 or straightUpperBound < 11:
                     firstMultiplier = 5
                 elif straightLowerBound == 4 or straightUpperBound == 11:
@@ -203,7 +218,7 @@ def calcProbs(hand, rankType, cardsOnTable, handStatus):
                 probability = (firstMultiplier * 3 * 4**3 * nCr(8, 2) * 4**2) / totalCombinations             
         elif rankType == "Flush":
             if numSuited == 1: 
-                probFlushWithHand = 2 * nCr(12, 4) * 46 #There are 46 remaining cards
+                probFlushWithHand = 2 * nCr(12, 4) * 46
                 probFlushWithoutHand = 2 * nCr(13, 5)
                 marginalProbability1 = probFlushWithHand / totalCombinations
                 probability = marginalProbability1 + (1 - marginalProbability1) * (probFlushWithoutHand / totalCombinations)
@@ -214,7 +229,7 @@ def calcProbs(hand, rankType, cardsOnTable, handStatus):
                 probability = marginalProbability1 + (1 - marginalProbability1) * (probFlushWithoutHand / totalCombinations)
         elif rankType == "Full House":
             if NonPair == True:
-                probMatchingHand = 3**2 * nCr(10, 2) * 4**2 #The beginning has 3**2 because both 3C2 and 3C1 are 3
+                probMatchingHand = 3**2 * nCr(10, 2) * 4**2 # The beginning has 3**2 because both 3C2 and 3C1 = 3
                 probMatchingTable = 11 * nCr(4, 3) * 10 * nCr(4, 2)
                 probMatching_HandPair_TableTriple = 6 * 11 * nCr(4, 3) * 10 * 4
                 probMatching_HandTriple_TablePair = 2 * nCr(3, 2) * 11 * nCr(4, 2) * 10 * 4
@@ -343,12 +358,12 @@ def calcProbs(hand, rankType, cardsOnTable, handStatus):
                 probability = (3 * 3 * 9 * 4) / totalCombinations
         elif rankType == "Three of a Kind":
             if NonPair == True:
-                #We multiply by 5 because there are 5 different cards (2 in your hand and 3 on the flop) that need runner, runner
+                # We multiply by 5 because there are 5 different cards (2 in your hand and 3 on the flop) that need runner, runner
                 probability = (5 * nCr(3, 2)) / totalCombinations
             elif Pair == True:
                 probability = (2 * 9 * 4) / totalCombinations
             elif TwoPair == True:
-                probability = 0 #Because you would get full house
+                probability = 0 # Because you would get full house
         elif rankType == "Straight":
             probRunnerRunner = (StraightRunnerRunner * 4**2) / totalCombinations
             
@@ -416,7 +431,7 @@ def calcProbs(hand, rankType, cardsOnTable, handStatus):
             elif Pair == True:
                 probability = 2 / totalCombinations
             elif TwoPair == True:
-                probability = 0 #Because if they get a triple, that would mean a full house
+                probability = 0 # Because if they get a triple, that would mean a full house
         elif rankType == "Straight":
             probability = (StraightSingleRunner * 4) / totalCombinations
         elif rankType == "Flush":
@@ -431,7 +446,7 @@ def calcProbs(hand, rankType, cardsOnTable, handStatus):
                 probability = 0
             elif Pair == True:
                 probability = 0
-            elif TwoPair == True: #Leaving this for right now, but later I need to check if we have three pair as well
+            elif TwoPair == True: # Leaving this for right now, but later I need to check if we have three pair as well
                 probability = 4 / totalCombinations
             elif Triple == True:
                 probability = (3 * 3) / totalCombinations
@@ -445,13 +460,18 @@ def calcProbs(hand, rankType, cardsOnTable, handStatus):
             elif Triple or FullHouse == True:
                 probability = 1 / totalCombinations
         elif rankType == "Straight Flush":
-            probability = 0 #FIX THIS WITH AN ACTUAL PROBABILITY
+            if numSuited < 4 or StraightSingleRunner == 0:
+                probability = 0
+            else:
+                probability = 0 # FIX THIS WITH AN ACTUAL PROBABILITY
     return probability
 
 
 def findHandStatus(hand, table):
     evaluationHand = list(table)
     evaluationHand.extend(hand)
+    
+    ### Initializing the states to False - will update if they turn out to be True ###
     
     NonPair = False
     Pair = False
@@ -476,7 +496,8 @@ def findHandStatus(hand, table):
     for i in range(1, len(numbers)):
         diff = numbers[i] - numbers[(i-1)]
         
-        #Check for pairs
+        ### Check for pairs ###
+        
         if diff == 0:
             pair_sequence += 1
             pair = numbers[i]
@@ -489,14 +510,17 @@ def findHandStatus(hand, table):
                 pair_sequences.append(pair_sequence)
             pair_sequence = 1
             
-        #Check for number of suited cards
+        ### Check for number of suited cards ###
+        
         if suits[i] == suits[(i-1)]:
             tempSuited += 1
             if tempSuited > NumSuited:
                 NumSuited = tempSuited
         elif suits[i] != suits[(i-1)]:
             tempSuited = 1
-        
+    
+    ### Check for various states ###
+    
     if len(pair_sequences) > 1 and np.sum(np.array(pair_sequences) == 3) > 0:
         FullHouse = True
     elif len(pair_sequences) == 1 and pair_sequences[0] == 3:
@@ -507,6 +531,8 @@ def findHandStatus(hand, table):
         Pair = True
     elif len(pair_sequences) == 0:
         NonPair = True
+    
+    ### Initialize and begin to fill the dictionary ###
     
     statusDict = {}
     statusDict["NonPair"] = NonPair
