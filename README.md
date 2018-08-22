@@ -1,87 +1,35 @@
-# Poker-Probability-Approximation
+# Poker Probability Approximation with Deep Learning
 
-One Paragraph of project description goes here
+This project uses of a neural network to quickly compute the probability of a hand ending in a win or tie. While lookup tables can be used, they are memory-intensive and cannot be stored in memory-constrained environments such as mobile applications. Storing the weights in either numpy or tensorflow drastically reduces the memory required. The learned model can be used in any betting round of Texas Hold'Em Poker.
 
 ## Getting Started
 
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
+To get started, clone this repo and open the file `pokerDeepLearningModel.py`
 
-### Prerequisites
-
-What things you need to install the software and how to install them
+You will see three variables near the top of the file which you can toggle before running 
 
 ```
-Give examples
+num_data_points = 1000           # The number of instances we want in our sample dataset
+use_existing_model = True        # Do you want to use a pre-computed model or train a new one?
+inference_sample_size = 100      # Size of sample to test the model on
 ```
 
-### Installing
-
-A step by step series of examples that tell you how to get a development env running
-
-Say what the step will be
-
-```
-Give the example
-```
-
-And repeat
-
-```
-until finished
-```
-
-End with an example of getting some data out of the system or using it for a little demo
-
-## Running the tests
-
-Explain how to run the automated tests for this system
-
-### Break down into end to end tests
-
-Explain what these tests test and why
-
-```
-Give an example
-```
-
-### And coding style tests
-
-Explain what these tests test and why
-
-```
-Give an example
-```
+The file outputs the Mean Absolute Error (MAE) for the sample in which you are testing on 
 
 ## Deployment
 
-Add additional notes about how to deploy this on a live system
+The learned model can easily be loaded and used as an input to a heuristic-based agent or a machine learning-based agent. 
 
-## Built With
+```
+probability_saver = tf.train.import_meta_graph("Probability Model/ProbabilityApproximator.meta")
+probability_saver.restore(sess, tf.train.latest_checkpoint("Probability Model"))
 
-* [Dropwizard](http://www.dropwizard.io/1.0.2/docs/) - The web framework used
-* [Maven](https://maven.apache.org/) - Dependency Management
-* [ROME](https://rometools.github.io/rome/) - Used to generate RSS Feeds
+graph = tf.get_default_graph()
+probabilityFunction = probabilityApproximator(sess, probabilityInputList.shape[1], 0.0005, use_existing_model, graph)
+```
 
-## Contributing
+A popular heuristic implementation is to use the probabilities obtained from the neural network with the Kelly Criterion (with some noise to reduce predictability). Conversely, with a machine learning agent, we can use a function approximation for the policy and feed these probabilities as some of the inputs.
 
-Please read [CONTRIBUTING.md](https://gist.github.com/PurpleBooth/b24679402957c63ec426) for details on our code of conduct, and the process for submitting pull requests to us.
+## Work in Progress
 
-## Versioning
-
-We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/your/project/tags). 
-
-## Authors
-
-* **Billie Thompson** - *Initial work* - [PurpleBooth](https://github.com/PurpleBooth)
-
-See also the list of [contributors](https://github.com/your/project/contributors) who participated in this project.
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
-
-## Acknowledgments
-
-* Hat tip to anyone whose code was used
-* Inspiration
-* etc
+The combinatorics for straight flush need to be updated in the `pokerCombinatorics.py` file
