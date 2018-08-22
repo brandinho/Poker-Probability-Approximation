@@ -59,8 +59,12 @@ def simulateProbability(hand, table, deck, simulations):
         clean_shuffled_deck = [x for x in deck.currentDeck if x not in list(cards_to_remove)]
         deck.table = table
         
+        ### We are holding our hands constant but randomly selecting a hand for our opponent from the shuffled deck ###
+        
         theoretical_hands = np.array([list(hand), clean_shuffled_deck[:2]])
         clean_shuffled_deck = clean_shuffled_deck[2:]
+        
+        ### We add randomly selected cards to the board from the shuffled deck to complete the river ###
         
         deck.table = deck.table + clean_shuffled_deck[:(5-len(table))]
         winner = deck.whoWins(theoretical_hands)[1]
@@ -74,6 +78,9 @@ def simulateProbability(hand, table, deck, simulations):
 
 
 def statusDictToInputArray(statusDict, hand_or_table, cards, tableDeck):
+    
+    ### We are taking the hand/board states and converting them into input vectors, which will be stored in an array ###
+    
     if len(cards) > 0:
         pair_status = 1 if statusDict['Pair'] == True else 0
         if statusDict['straightGap'] == 0:

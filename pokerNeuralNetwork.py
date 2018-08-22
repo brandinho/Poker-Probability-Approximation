@@ -13,8 +13,8 @@ class probabilityApproximator():
     def __init__(self, sess, n_features, lr, use_existing_model, graph = None):
         self.sess = sess
         self._n_features = n_features
-        self._neurons1 = 24
-        self._neurons2 = 12
+        self._neurons1 = 24 # Number of neurons in the first hidden layer
+        self._neurons2 = 12 # Number of neurons in the second hidden layer
         
         if use_existing_model == True:
             self.inputs = graph.get_tensor_by_name("ProbabilityNetwork/Inputs:0")
