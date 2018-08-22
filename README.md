@@ -6,7 +6,7 @@ This project uses of a neural network to quickly compute the probability of a ha
 
 To get started, clone this repo and open the file `pokerDeepLearningModel.py`
 
-You will see three variables near the top of the file which you can toggle before running the file 
+You will see three variables near the top of the file which you can toggle before running 
 
 ```
 num_data_points = 1000           # The number of instances we want in our sample dataset
