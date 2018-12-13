@@ -4,6 +4,10 @@ This project uses a neural network to quickly compute the probability of a hand 
 
 The learned model can be used in any betting round of Texas Hold'Em Poker.
 
+The paper can be found at the link below:
+
+https://arxiv.org/abs/1808.07220
+
 ## Getting Started
 
 To get started, clone this repo and open the file `pokerDeepLearningModel.py`
